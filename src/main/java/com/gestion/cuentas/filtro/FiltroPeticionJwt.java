@@ -3,6 +3,7 @@ package com.gestion.cuentas.filtro;
 import com.gestion.cuentas.servicio.ServicioDetalleUsuario;
 import com.gestion.cuentas.utilidad.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,7 +19,9 @@ import java.io.IOException;
 
 @Component
 public class FiltroPeticionJwt extends OncePerRequestFilter {
-    private static final String BEARER_ = "Bearer ";
+
+    @Value("${app.jwt.bearer}")
+    private String BEARER;
     @Autowired
     private ServicioDetalleUsuario servicioDetalleUsuario;
 
@@ -31,8 +34,8 @@ public class FiltroPeticionJwt extends OncePerRequestFilter {
         String nombreusuario = null;
         String jwt = null;
 
-        if (autorizacion != null && autorizacion.startsWith(BEARER_)) {
-            jwt = autorizacion.substring(7);
+        if (autorizacion != null && autorizacion.startsWith(BEARER)) {
+            jwt = autorizacion.substring(BEARER.length());
             nombreusuario = jwtUtil.extractUsername(jwt);
             if (nombreusuario != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = servicioDetalleUsuario.loadUserByUsername(nombreusuario);
