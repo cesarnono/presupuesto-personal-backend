@@ -15,7 +15,8 @@ public enum EnumMensaje {
     ERROR_CREAR_CUENTA_IDBALANCE_NO_EXISTE("Error al crear cuenta, idbalance no existe."),
     ERROR_CONSULTAR_PRESUPUESTO_ID_NO_EXISTE("Error al consultar presupuesto, idpresupuesto no existe."),
     ERROR_ACTUALIZAR_IDPRESUPUESTO_NO_EXISTE("Error al actualizar presupuesto, idpresupuesto no existe."),
-    SIN_CUENTAS_ASOCIADAS_ACTUALIZAR_TOTALES("No existen cuenta asociadas para actualizar los totales del estado financiero.");
+    SIN_CUENTAS_ASOCIADAS_ACTUALIZAR_TOTALES("No existen cuenta asociadas para actualizar los totales del estado financiero."),
+    NOMBRE_DE_USUARIO_O_PASSWORD_INCORRECTO ("Nombre de usuario o password incorrecto");
     private String mensaje;
 
 

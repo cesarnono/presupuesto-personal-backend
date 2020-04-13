@@ -12,6 +12,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/presupuesto-personal")
 public class PresupuestoPersonalControlador {
+    public static final String USUARIOS_IDUSUARIO = "/usuarios/{idusuario}";
+    public static final String IDPRESUPUESTO = "/{idpresupuesto}";
+    public static final String IDPRESUPUESTO_CUENTAS = "/{idpresupuesto}/cuentas";
     private EstadoFinancieroServicio estadoFinancieroServicio;
     private CuentaServicio cuentaServicio;
 
@@ -26,17 +29,17 @@ public class PresupuestoPersonalControlador {
         return estadoFinancieroServicio.guardar(presupuestoPersonalDto);
     }
 
-    @GetMapping("/usuarios/{idusuario}")
+    @GetMapping(USUARIOS_IDUSUARIO)
     public List<PresupuestoPersonalDto> consultarEstadosFinancierosPorUsuario(@PathVariable String idusuario){
        return estadoFinancieroServicio.consultarPresupuestosPorUsuario(idusuario);
     }
 
-    @GetMapping("/{idpresupuesto}")
+    @GetMapping(IDPRESUPUESTO)
     public PresupuestoPersonalDto consultar(@PathVariable String idpresupuesto){
       return estadoFinancieroServicio.consultar(idpresupuesto);
     }
 
-    @GetMapping("/{idpresupuesto}/cuentas")
+    @GetMapping(IDPRESUPUESTO_CUENTAS)
     public List<CuentaDto> consultarCuentas(@PathVariable String idpresupuesto){
         return this.estadoFinancieroServicio.consultarCuentas(idpresupuesto);
     }
