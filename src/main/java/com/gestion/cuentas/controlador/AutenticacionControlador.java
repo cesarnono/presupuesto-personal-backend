@@ -2,8 +2,8 @@ package com.gestion.cuentas.controlador;
 
 import com.gestion.cuentas.constante.EnumMensaje;
 import com.gestion.cuentas.excepcion.CuentaException;
-import com.gestion.cuentas.modelo.PeticionAutenticacion;
-import com.gestion.cuentas.modelo.RespuestaAutenticacion;
+import com.gestion.cuentas.dto.PeticionAutenticacionDto;
+import com.gestion.cuentas.dto.RespuestaAutenticacionDto;
 import com.gestion.cuentas.servicio.ServicioDetalleUsuario;
 import com.gestion.cuentas.utilidad.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,15 +31,15 @@ public class AutenticacionControlador {
     private JwtUtil jwtUtil;
 
     @RequestMapping(value = AUTENTICACION, method = RequestMethod.POST)
-    public ResponseEntity<?> crearTokenAutenticacion(@RequestBody PeticionAutenticacion peticionAutenticacion) throws Exception {
+    public ResponseEntity<?> crearTokenAutenticacion(@RequestBody PeticionAutenticacionDto peticionAutenticacionDto) throws Exception {
         try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(peticionAutenticacion.getNombreusuario(),
-                    peticionAutenticacion.getPassword()));
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(peticionAutenticacionDto.getNombreusuario(),
+                    peticionAutenticacionDto.getPassword()));
         } catch (BadCredentialsException e) {
             throw new CuentaException(EnumMensaje.NOMBRE_DE_USUARIO_O_PASSWORD_INCORRECTO.getMensaje(),e);
         }
-        final UserDetails userDetails = servicioDetalleUsuario.loadUserByUsername(peticionAutenticacion.getNombreusuario());
+        final UserDetails userDetails = servicioDetalleUsuario.loadUserByUsername(peticionAutenticacionDto.getNombreusuario());
         final String jwt = jwtUtil.generateToken(userDetails);
-        return ResponseEntity.ok(new RespuestaAutenticacion(jwt));
+        return ResponseEntity.ok(new RespuestaAutenticacionDto(jwt));
     }
 }

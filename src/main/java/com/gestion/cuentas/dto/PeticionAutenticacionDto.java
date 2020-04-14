@@ -1,11 +1,11 @@
-package com.gestion.cuentas.modelo;
+package com.gestion.cuentas.dto;
 
-public class PeticionAutenticacion {
+public class PeticionAutenticacionDto {
 
-    public PeticionAutenticacion() {
+    public PeticionAutenticacionDto() {
     }
 
-    public PeticionAutenticacion(String nombreusuario, String password) {
+    public PeticionAutenticacionDto(String nombreusuario, String password) {
         this.nombreusuario = nombreusuario;
         this.password = password;
     }
