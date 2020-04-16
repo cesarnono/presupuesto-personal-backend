@@ -6,5 +6,5 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.List;
 
 public interface PresupuestoPersonalRepositorio extends MongoRepository<PresupuestoPersonal,String> {
-    List<PresupuestoPersonal> findByIdusuarioLikeOrderByFechacreacionDesc(String idusuario);
+    List<PresupuestoPersonal> findByIdusuarioOrderByFechacreacionDesc(String idusuario);
 }

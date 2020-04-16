@@ -51,7 +51,7 @@ public class PresupuestoPersonalServicio implements EstadoFinancieroServicio {
         if(!Validacion.esCampoCadenaValido(idusuario)){
             throw new CuentaException(EnumMensaje.INFORMACION_INVALIDA_OBTENER_PRESUPUESTOS.getMensaje());
         }
-        List<PresupuestoPersonal> presupuestos = presupuestoPersonalRepositorio.findByIdusuarioLikeOrderByFechacreacionDesc(idusuario);
+        List<PresupuestoPersonal> presupuestos = presupuestoPersonalRepositorio.findByIdusuarioOrderByFechacreacionDesc(idusuario);
         LOGGER.info("Nro presupuestos encontrados para usuario "+idusuario+": "+presupuestos.size());
         return PresupuestoPersonalConversor.convertirAListaPresupuestoPersonalDto(presupuestos);
     }
