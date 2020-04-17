@@ -12,7 +12,7 @@ public final class ValidacionCuenta extends  Validacion {
     }
 
     public static boolean esCuentaValidaParaActualizar(CuentaDto cuentaDto){
-        return cuentaDto != null && esCuentaValidaParaGuardar(cuentaDto)&&
-                esCampoCadenaValido(cuentaDto.getId());
+        return cuentaDto != null && esCampoCadenaValido(cuentaDto.getId())
+                && esCampoCadenaValido(cuentaDto.getNombre());
     }
 }

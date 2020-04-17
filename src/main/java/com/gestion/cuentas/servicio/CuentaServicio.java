@@ -13,4 +13,6 @@ public interface CuentaServicio {
 
     boolean eliminarCuenta(CuentaDto cuentaDto);
 
+    public CuentaDto consultarCuenta(String idcuenta);
+
 }

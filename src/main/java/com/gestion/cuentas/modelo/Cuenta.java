@@ -3,6 +3,7 @@ package com.gestion.cuentas.modelo;
 import com.gestion.cuentas.constante.EnumFormatoFecha;
 import com.gestion.cuentas.utilidad.FechaUtilidad;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -12,92 +13,68 @@ import javax.validation.constraints.NotNull;
 public class Cuenta {
 
     @Id
-    private String id;
+    private final String id;
 
-    @NotNull
-    private String nombre;
+    private final String nombre;
 
-    @NotNull
-    private double valor;
-    @NotNull
+    private final double valor;
+
     @Field("clase")
-    private String clase;
+    private final String clase;
 
-    @NotNull
     @Field("id_presupuesto")
-    private String idpresupuesto;
+    private final String idpresupuesto;
 
-    @NotNull
     @Field("fecha_creacion")
-    private String fechacreacion;
+    private final String fechacreacion;
 
-    @NotNull
     @Field("fecha_modificacion")
-    private String fechamodificacion;
+    private final String fechamodificacion;
 
-    public Cuenta(@NotNull String nombre, @NotNull double valor, @NotNull String clase, @NotNull String idpresupuesto) {
+    @PersistenceConstructor
+    public Cuenta(String id ,String nombre, double valor, String clase, String idpresupuesto,
+                  String fechacreacion, String fechamodificacion) {
+        this.id= id;
         this.nombre = nombre;
         this.valor = valor;
         this.clase = clase;
         this.idpresupuesto = idpresupuesto;
-        this.fechacreacion = FechaUtilidad.obtenerFechaActual(EnumFormatoFecha.FORMATO_D_M_A_H_M_S);
-        this.fechamodificacion = this.fechacreacion;
+        this.fechacreacion = fechacreacion;
+        this.fechamodificacion = fechamodificacion;
+    }
+
+    public static Cuenta nuevaCuenta(String nombre, double valor, String clase, String idpresupuesto){
+        return new Cuenta(null,nombre,valor,clase,idpresupuesto,
+                FechaUtilidad.obtenerFechaActual(EnumFormatoFecha.FORMATO_D_M_A_H_M_S),
+                FechaUtilidad.obtenerFechaActual(EnumFormatoFecha.FORMATO_D_M_A_H_M_S));
     }
 
     public String getId() {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public String getNombre() {
         return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
     }
 
     public double getValor() {
         return valor;
     }
 
-    public void setValor(double valor) {
-        this.valor = valor;
-    }
-
     public String getClase() {
         return clase;
-    }
-
-    public void setClase(String clase) {
-        this.clase = clase;
     }
 
     public String getIdpresupuesto() {
         return idpresupuesto;
     }
 
-    public void setIdpresupuesto(String idpresupuesto) {
-        this.idpresupuesto = idpresupuesto;
-    }
-
     public String getFechacreacion() {
         return fechacreacion;
     }
 
-    public void setFechacreacion(String fechacreacion) {
-        this.fechacreacion = fechacreacion;
-    }
-
     public String getFechamodificacion() {
         return fechamodificacion;
-    }
-
-    public void setFechamodificacion(String fechamodificacion) {
-        this.fechamodificacion = fechamodificacion;
     }
 
     @Override

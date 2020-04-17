@@ -1,7 +1,6 @@
 package com.gestion.cuentas.servicio;
 
 import com.gestion.cuentas.constante.EnumMensaje;
-import com.gestion.cuentas.conversor.CuentaConversor;
 import com.gestion.cuentas.dto.CuentaDto;
 import com.gestion.cuentas.dto.PresupuestoPersonalDto;
 import com.gestion.cuentas.excepcion.CuentaException;
@@ -40,7 +39,7 @@ class PresupuestoPersonalServicioTest {
             PresupuestoPersonalDto presupuestoPersonalDto = new PresupuestoPersonalDto();
             presupuestoPersonalServicio.guardar(presupuestoPersonalDto);
         });
-        String mensajeEsperado = EnumMensaje.INFORMACION_INVALIDA_CREAR_PRESUPUESTO_PERSONAL.getMensaje();
+        String mensajeEsperado = EnumMensaje.INFORMACION_INVALIDA_GUARDAR_PRESUPUESTO_PERSONAL.getMensaje();
         String mensajeActual = excepcion.getMessage();
         assertTrue(mensajeEsperado.contains(mensajeActual));
     }
@@ -69,10 +68,10 @@ class PresupuestoPersonalServicioTest {
 
     @Test
     public void consultarPresupuestosUsuario(){
-        PresupuestoPersonal presupuestoPersonal = new PresupuestoPersonal("45533yu","presupuesto abril","CC12334");
-        PresupuestoPersonal presupuestoPersonal1 = new PresupuestoPersonal("45533rt","presupuesto mayo","CC12334");
+        PresupuestoPersonal presupuestoPersonal = new PresupuestoPersonal("45533yu","presupuesto abril","CC12334",100,0,null,null,null);
+        PresupuestoPersonal presupuestoPersonal1 = new PresupuestoPersonal("45533rt","presupuesto mayo","CC12334",200,0,null, null,null);
         List<PresupuestoPersonal> presupuestosUsuario = Arrays.asList(new PresupuestoPersonal[]{presupuestoPersonal, presupuestoPersonal1});
-        when(presupuestoPersonalRepositorio.findByIdusuarioLikeOrderByFechacreacionDesc("CC12334")).thenReturn(presupuestosUsuario);
+        when(presupuestoPersonalRepositorio.findByIdusuarioOrderByFechacreacionDesc("CC12334")).thenReturn(presupuestosUsuario);
         List<PresupuestoPersonalDto> presupuestoPersonalDtos =presupuestoPersonalServicio.consultarPresupuestosPorUsuario("CC12334");
         assertTrue(presupuestoPersonalDtos.size() == presupuestosUsuario.size());
     }
@@ -102,7 +101,7 @@ class PresupuestoPersonalServicioTest {
     @Test
     public void consultarPresupuestoValido(){
         String idPresupuesto ="345656TY";
-        PresupuestoPersonal presupuestoPersonalConsultado = new PresupuestoPersonal(idPresupuesto,"presupuesto test","CC234445");
+        PresupuestoPersonal presupuestoPersonalConsultado = new PresupuestoPersonal(idPresupuesto,"presupuesto test","CC234445",100,0,null, null,null);
         when(presupuestoPersonalRepositorio.findById(idPresupuesto)).thenReturn(Optional.of(presupuestoPersonalConsultado));
         assertNotNull(presupuestoPersonalServicio.consultar(idPresupuesto));
     }
@@ -119,7 +118,7 @@ class PresupuestoPersonalServicioTest {
 
     @Test
     public void consultarCuentas(){
-        List<Cuenta> cuentas = Arrays.asList(new Cuenta []{new Cuenta("", 100, "", "")});
+        List<Cuenta> cuentas = Arrays.asList(new Cuenta []{new Cuenta("1", "test",100, "GASTOS", "",null,null)});
         when(cuentaRepositorio.findByIdpresupuesto(anyString())).thenReturn(cuentas);
         List<CuentaDto> cuentaDtos = presupuestoPersonalServicio.consultarCuentas("345545ty");
         assertTrue(cuentas.size() == cuentaDtos.size());
@@ -129,19 +128,17 @@ class PresupuestoPersonalServicioTest {
     @Test
     public void actualizarValoresTotales(){
         String idpresupuesto = "455665po";
-        PresupuestoPersonal presupuestoPersonal = new PresupuestoPersonal(idpresupuesto,"presupuesto enero","CC3455566");
+        PresupuestoPersonal presupuestoPersonal = new PresupuestoPersonal(idpresupuesto,"presupuesto enero","CC3455566",300,0,null, null, null);
         //cuentas
         List<Cuenta> cuentas = Arrays.asList(new Cuenta []{
-                new Cuenta("Agua", 100, "GASTOS", idpresupuesto),
-                new Cuenta("Luz", 50, "GASTOS", idpresupuesto),
-                new Cuenta("Internet", 100, "GASTOS", idpresupuesto)
+                new Cuenta("1","Agua", 100, "GASTOS", idpresupuesto,null,null),
+                new Cuenta("2","Luz", 50, "GASTOS", idpresupuesto,null, null),
+                new Cuenta("3","Internet", 100, "GASTOS", idpresupuesto,null,null)
         });
         when(presupuestoPersonalRepositorio.findById(idpresupuesto)).thenReturn(Optional.of(presupuestoPersonal));
         when(cuentaRepositorio.findByIdpresupuesto(idpresupuesto)).thenReturn(cuentas);
-        assertTrue(presupuestoPersonalServicio.actualizarValoresTotales(idpresupuesto));
+        //assertTrue(presupuestoPersonalServicio.actualizarValoresTotales(idpresupuesto));
+        PresupuestoPersonalDto presupuestoPersonalDto = presupuestoPersonalServicio.actualizarValoresTotales(idpresupuesto);
+        assertTrue(presupuestoPersonalDto.getTotalgastos() == 250);
     }
-
-
-
-
 }

@@ -1,17 +1,19 @@
 package com.gestion.cuentas.servicio;
 
 import com.gestion.cuentas.constante.EnumMensaje;
-import com.gestion.cuentas.conversor.CuentaConversor;
+import com.gestion.cuentas.mapeador.CuentaMapeador;
 import com.gestion.cuentas.dto.CuentaDto;
 import com.gestion.cuentas.excepcion.CuentaException;
 import com.gestion.cuentas.modelo.Cuenta;
+import com.gestion.cuentas.modelo.PresupuestoPersonal;
 import com.gestion.cuentas.repositorio.CuentaRepositorio;
+import com.gestion.cuentas.repositorio.PresupuestoPersonalRepositorio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.Mockito;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -23,19 +25,19 @@ class CuentaServicioImplTest {
 
     private CuentaServicioImpl cuentaServicio;
 
-    @Mock
-    private CuentaRepositorio cuentaRepositorio;
+    private CuentaRepositorio cuentaRepositorioMock;
 
-    @Mock
+    private PresupuestoPersonalRepositorio presupuestoPersonalRepositorioMock;
+
     private EstadoFinancieroServicio presupuestoPersonalServicio;
 
     @BeforeEach
     public void inicializador() {
-        // presupuestoPersonalServicio = new PresupuestoPersonalServicio(null, null);
-        MockitoAnnotations.initMocks(this);
-        //cuentaRepositorio = Mockito.mock(CuentaRepositorio.class);
-        //presupuestoPersonalServicio = Mockito.mock(PresupuestoPersonalServicio.class);
-        cuentaServicio = new CuentaServicioImpl(cuentaRepositorio, presupuestoPersonalServicio);
+        cuentaRepositorioMock = Mockito.mock(CuentaRepositorio.class);
+        presupuestoPersonalRepositorioMock = Mockito.mock(PresupuestoPersonalRepositorio.class);
+        presupuestoPersonalServicio = new PresupuestoPersonalServicio(presupuestoPersonalRepositorioMock, cuentaRepositorioMock);
+        cuentaServicio = new CuentaServicioImpl(cuentaRepositorioMock, presupuestoPersonalServicio);
+
     }
 
     @Test
@@ -111,7 +113,14 @@ class CuentaServicioImplTest {
         cuentaDto.setIdpresupuesto("45rrt55");
         cuentaDto.setClase("GASTOS");
         cuentaDto.setValor(100);
-        Cuenta cuenta = CuentaConversor.convertirACuenta(cuentaDto);
+        Cuenta cuenta = CuentaMapeador.convertirAModelo(cuentaDto);
+        PresupuestoPersonal presupuestoPersonal =PresupuestoPersonal.existentePresupuesto("34TREW","presupuesto test",
+                "CC34554","",500,0,null);
+
+        when(cuentaRepositorioMock.findById(anyString())).thenReturn(Optional.of(cuenta));
+        when(presupuestoPersonalRepositorioMock.findById(anyString())).thenReturn(Optional.of(presupuestoPersonal));
+        when(cuentaRepositorioMock.findByIdpresupuesto(anyString())).thenReturn(Arrays.asList(cuenta));
+
         CuentaDto cuentaDtoGuardado = cuentaServicio.guardarCuenta(cuentaDto);
         assertTrue(cuentaDto.getNombre().equals(cuentaDtoGuardado.getNombre()));
         assertTrue(cuentaDto.getIdpresupuesto().equals(cuentaDtoGuardado.getIdpresupuesto()));
@@ -142,7 +151,7 @@ class CuentaServicioImplTest {
             cuentaDto.setValor(100);
             cuentaServicio.actualizarCuenta(cuentaDto);
         });
-        String mensajeEsperado = EnumMensaje.ERROR_ACTUALIZAR_CUENTA_NO_EXISTE.getMensaje();
+        String mensajeEsperado = EnumMensaje.ERROR_CONSULTAR_IDCUENTA_NO_EXISTE.getMensaje();
         String mensajeActual = excepcion.getMessage();
         assertTrue(mensajeActual.contains(mensajeEsperado));
     }
@@ -155,9 +164,16 @@ class CuentaServicioImplTest {
         cuentaDto.setIdpresupuesto("45rrt55");
         cuentaDto.setClase("GASTOS");
         cuentaDto.setValor(100);
-        Cuenta cuentaConsultada = new Cuenta("cuenta original", 100, "GASTOS","45rrt55");
-        cuentaConsultada.setId(cuentaDto.getId());
-        when(cuentaRepositorio.findById(anyString())).thenReturn(Optional.of(cuentaConsultada));
+        Cuenta cuentaConsultada = new Cuenta(cuentaDto.getId(),"cuenta original", 100, "GASTOS","45rrt55"
+        ,null, null);
+        when(cuentaRepositorioMock.findById(anyString())).thenReturn(Optional.of(cuentaConsultada));
+
+        PresupuestoPersonal presupuestoPersonal =PresupuestoPersonal.existentePresupuesto("34TREW","presupuesto test",
+                "CC34554","",500,0,null);
+
+        when(presupuestoPersonalRepositorioMock.findById(anyString())).thenReturn(Optional.of(presupuestoPersonal));
+        when(cuentaRepositorioMock.findByIdpresupuesto(anyString())).thenReturn(Arrays.asList(cuentaConsultada));
+
         CuentaDto cuentaDtoModificada =cuentaServicio.actualizarCuenta(cuentaDto);
         assertTrue(cuentaDto.getNombre().equals(cuentaDtoModificada.getNombre()));
         assertTrue(cuentaDtoModificada.getValor() == 200);
@@ -181,22 +197,21 @@ class CuentaServicioImplTest {
             cuentaDto.setId("3445");
             cuentaServicio.eliminarCuenta(cuentaDto);
         });
-        String mensajeEsperado = EnumMensaje.ERROR_ELIMINAR_CUENTA_NO_EXISTE.getMensaje();
+        String mensajeEsperado = EnumMensaje.ERROR_CONSULTAR_IDCUENTA_NO_EXISTE.getMensaje();
         String mensajeActual = excepcion.getMessage();
         assertTrue(mensajeActual.contains(mensajeEsperado));
     }
 
     @Test
     public void eliminarCuentaExistente(){
+        Cuenta cuenta = new Cuenta("56UTR5", "cuenta1",100,"GASTOS","34TREW",null,null);
+        PresupuestoPersonal presupuestoPersonal =PresupuestoPersonal.existentePresupuesto("34TREW","presupuesto test",
+                "CC34554","",500,100,null);
+        when(cuentaRepositorioMock.findById(anyString())).thenReturn(Optional.of(cuenta));
+        when(presupuestoPersonalRepositorioMock.findById(anyString())).thenReturn(Optional.of(presupuestoPersonal));
+        when(cuentaRepositorioMock.findByIdpresupuesto(anyString())).thenReturn(Arrays.asList(cuenta));
         CuentaDto cuentaDto = new CuentaDto();
         cuentaDto.setId("56UTR5");
-        cuentaDto.setNombre("cuenta modificada");
-        cuentaDto.setIdpresupuesto("45rrt55");
-        cuentaDto.setClase("GASTOS");
-        cuentaDto.setValor(100);
-        Cuenta cuentaConsultada = CuentaConversor.convertirACuenta(cuentaDto);
-        cuentaConsultada.setId(cuentaDto.getId());
-        when(cuentaRepositorio.findById(anyString())).thenReturn(Optional.of(cuentaConsultada));
         assertTrue(cuentaServicio.eliminarCuenta(cuentaDto));
     }
 

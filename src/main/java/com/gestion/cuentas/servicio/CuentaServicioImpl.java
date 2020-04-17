@@ -1,13 +1,11 @@
 package com.gestion.cuentas.servicio;
 
-import com.gestion.cuentas.constante.EnumFormatoFecha;
 import com.gestion.cuentas.constante.EnumMensaje;
-import com.gestion.cuentas.conversor.CuentaConversor;
+import com.gestion.cuentas.mapeador.CuentaMapeador;
 import com.gestion.cuentas.dto.CuentaDto;
 import com.gestion.cuentas.excepcion.CuentaException;
 import com.gestion.cuentas.modelo.Cuenta;
 import com.gestion.cuentas.repositorio.CuentaRepositorio;
-import com.gestion.cuentas.utilidad.FechaUtilidad;
 import com.gestion.cuentas.validacion.Validacion;
 import com.gestion.cuentas.validacion.ValidacionCuenta;
 import org.slf4j.Logger;
@@ -37,11 +35,11 @@ public class CuentaServicioImpl implements CuentaServicio {
         if (!ValidacionCuenta.esCuentaValidaParaGuardar(cuentaDto)) {
             throw new CuentaException(EnumMensaje.INFORMACION_INVALIDA_GUARDAR_CUENTA.getMensaje());
         }
-        Cuenta cuenta = CuentaConversor.convertirACuenta(cuentaDto);
+        Cuenta cuenta = CuentaMapeador.convertirAModelo(cuentaDto);
         cuentaRepositorio.insert(cuenta);
-        LOGGER.info("Cuenta creada exitosamente: "+cuenta);
-        this.estadoFinancieroServicio.actualizarValoresTotales(cuentaDto.getIdpresupuesto());
-        return CuentaConversor.convertirACuentaDto(cuenta);
+        LOGGER.info("Cuenta creada exitosamente idcuenta: "+cuenta.getId());
+        this.estadoFinancieroServicio.actualizarValoresTotales(cuenta.getIdpresupuesto());
+        return CuentaMapeador.convertirADto(cuenta);
     }
 
     @Override
@@ -50,20 +48,25 @@ public class CuentaServicioImpl implements CuentaServicio {
         if (!ValidacionCuenta.esCuentaValidaParaActualizar(cuentaDto)) {
             throw new CuentaException(EnumMensaje.INFORMACION_INVALIDA_ACTUALIZAR_CUENTA.getMensaje());
         }
-        Optional<Cuenta> cuentaOptional = cuentaRepositorio.findById(cuentaDto.getId());
-        if(!cuentaOptional.isPresent()){
-            throw new CuentaException(EnumMensaje.ERROR_ACTUALIZAR_CUENTA_NO_EXISTE.getMensaje() +" idcuenta: "+cuentaDto.getId());
+        CuentaDto cuentaDtoDesdeBaseDatos = consultarCuenta(cuentaDto.getId());
+        cuentaDtoDesdeBaseDatos.setNombre(cuentaDto.getNombre());
+        if(cuentaDto.getValor() > 0){
+            cuentaDtoDesdeBaseDatos.setValor(cuentaDtoDesdeBaseDatos.getValor() + cuentaDto.getValor());
         }
-        Cuenta cuenta = cuentaOptional.get();
-        cuenta.setNombre(cuentaDto.getNombre());
-        if(cuentaDto.getValor() != 0){
-            cuenta.setValor(cuenta.getValor() + cuentaDto.getValor());
-        }
-        cuenta.setFechamodificacion(FechaUtilidad.obtenerFechaActual(EnumFormatoFecha.FORMATO_D_M_A_H_M_S));
+        Cuenta cuenta =CuentaMapeador.convertirAModelo(cuentaDtoDesdeBaseDatos);
         cuentaRepositorio.save(cuenta);
-        LOGGER.info("Cuenta actualizada exitosamente: "+cuenta);
-        this.estadoFinancieroServicio.actualizarValoresTotales(cuentaDto.getIdpresupuesto());
-        return CuentaConversor.convertirACuentaDto(cuenta);
+        LOGGER.info("Cuenta actualizada exitosamente idcuenta: "+cuenta.getId());
+        this.estadoFinancieroServicio.actualizarValoresTotales(cuenta.getIdpresupuesto());
+        return CuentaMapeador.convertirADto(cuenta);
+    }
+
+    @Transactional
+    public CuentaDto consultarCuenta(String idcuenta) {
+        Optional<Cuenta> cuentaOptional = cuentaRepositorio.findById(idcuenta);
+        if(!cuentaOptional.isPresent()){
+            throw new CuentaException(EnumMensaje.ERROR_CONSULTAR_IDCUENTA_NO_EXISTE.getMensaje() +" idcuenta: "+ idcuenta);
+        }
+        return CuentaMapeador.convertirADto(cuentaOptional.get());
     }
 
     @Override
@@ -72,15 +75,10 @@ public class CuentaServicioImpl implements CuentaServicio {
         if(!Validacion.esCampoCadenaValido(cuentaDto.getId())){
             throw new CuentaException(EnumMensaje.ERROR_ELIMINAR_IDCUENTA_INVALIDO.getMensaje());
         }
-        Optional<Cuenta> cuentaOptional = cuentaRepositorio.findById(cuentaDto.getId());
-        if(!cuentaOptional.isPresent()){
-            throw new CuentaException(EnumMensaje.ERROR_ELIMINAR_CUENTA_NO_EXISTE.getMensaje() +" idcuenta: "+cuentaDto.getId());
-        }
-        Cuenta cuenta = cuentaOptional.get();
+        Cuenta cuenta = CuentaMapeador.convertirAModelo(consultarCuenta(cuentaDto.getId()));
         cuentaRepositorio.delete(cuenta);
-        LOGGER.info("Cuenta eliminada exitosamente: "+cuenta);
-        this.estadoFinancieroServicio.actualizarValoresTotales(cuentaDto.getIdpresupuesto());
+        LOGGER.info("Cuenta eliminada exitosamente idcuenta: "+cuenta.getId());
+        this.estadoFinancieroServicio.actualizarValoresTotales(cuenta.getIdpresupuesto());
         return true;
     }
-
 }

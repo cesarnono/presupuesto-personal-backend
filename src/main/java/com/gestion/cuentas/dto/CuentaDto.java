@@ -12,6 +12,8 @@ public class CuentaDto {
 
     private String idpresupuesto;
 
+    private String fechacreacion;
+
     public String getId() {
         return id;
     }
@@ -50,5 +52,13 @@ public class CuentaDto {
 
     public void setIdpresupuesto(String idpresupuesto) {
         this.idpresupuesto = idpresupuesto;
+    }
+
+    public String getFechacreacion() {
+        return fechacreacion;
+    }
+
+    public void setFechacreacion(String fechacreacion) {
+        this.fechacreacion = fechacreacion;
     }
 }

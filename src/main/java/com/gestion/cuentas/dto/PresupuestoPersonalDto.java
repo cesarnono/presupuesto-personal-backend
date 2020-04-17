@@ -1,12 +1,16 @@
 package com.gestion.cuentas.dto;
 
+import java.util.List;
+
 public class PresupuestoPersonalDto {
     private String id;
     private String nombre;
     private String idusuario;
+    private String fechacreacion;
     private double totalingresos;
     private double totalgastos;
     private double totalsaldo;
+    private List<CuentaDto> cuentaDtos;
 
     public String getId() {
         return id;
@@ -54,6 +58,22 @@ public class PresupuestoPersonalDto {
 
     public void setTotalsaldo(double totalsaldo) {
         this.totalsaldo = totalsaldo;
+    }
+
+    public String getFechacreacion() {
+        return fechacreacion;
+    }
+
+    public void setFechacreacion(String fechacreacion) {
+        this.fechacreacion = fechacreacion;
+    }
+
+    public List<CuentaDto> getCuentaDtos() {
+        return cuentaDtos;
+    }
+
+    public void setCuentaDtos(List<CuentaDto> cuentaDtos) {
+        this.cuentaDtos = cuentaDtos;
     }
 
     @Override
