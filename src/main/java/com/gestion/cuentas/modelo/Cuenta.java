@@ -12,14 +12,12 @@ import javax.validation.constraints.NotNull;
 @Document(collection = "cuenta")
 public class Cuenta {
 
-    @Id
-    private final String id;
+    private String id;
 
     private final String nombre;
 
     private final double valor;
 
-    @Field("clase")
     private final String clase;
 
     @Field("id_presupuesto")

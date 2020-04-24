@@ -19,8 +19,8 @@ import static com.gestion.cuentas.validacion.Validacion.esCampoCadenaValido;
 
 @Document(collection = "presupuesto_personal")
 public class PresupuestoPersonal {
-    @Id
-    private final String id;
+
+    private String id;
 
     private final String nombre;
 
