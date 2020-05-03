@@ -1,5 +1,7 @@
 package com.gestion.cuentas.dto;
 
+import java.util.List;
+
 public class CuentaDto {
 
     private String id;
@@ -13,6 +15,10 @@ public class CuentaDto {
     private String idpresupuesto;
 
     private String fechacreacion;
+
+    private String descripcion;
+
+    private List<MovimientoDto> movimientosDto;
 
     public String getId() {
         return id;
@@ -60,5 +66,21 @@ public class CuentaDto {
 
     public void setFechacreacion(String fechacreacion) {
         this.fechacreacion = fechacreacion;
+    }
+
+    public List<MovimientoDto> getMovimientosDto() {
+        return movimientosDto;
+    }
+
+    public void setMovimientosDto(List<MovimientoDto> movimientosDto) {
+        this.movimientosDto = movimientosDto;
+    }
+
+    public String getDescripcion() {
+        return descripcion!= null? descripcion: "--";
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 }

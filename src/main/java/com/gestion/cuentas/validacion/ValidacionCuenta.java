@@ -7,8 +7,7 @@ public final class ValidacionCuenta extends  Validacion {
     public static boolean esCuentaValidaParaGuardar(CuentaDto cuentaDto){
         return cuentaDto != null && esCampoCadenaValido(cuentaDto.getNombre()) &&
                 esCampoCadenaValido(cuentaDto.getIdpresupuesto()) &&
-                esCampoCadenaValido(cuentaDto.getClase()) &&
-                esCampoNumericoMayorIgualACero(cuentaDto.getValor());
+                esCampoCadenaValido(cuentaDto.getClase()) ;
     }
 
     public static boolean esCuentaValidaParaActualizar(CuentaDto cuentaDto){

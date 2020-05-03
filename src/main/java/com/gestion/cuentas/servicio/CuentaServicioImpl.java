@@ -1,11 +1,14 @@
 package com.gestion.cuentas.servicio;
 
 import com.gestion.cuentas.constante.EnumMensaje;
+import com.gestion.cuentas.dto.MovimientoDto;
 import com.gestion.cuentas.mapeador.CuentaMapeador;
 import com.gestion.cuentas.dto.CuentaDto;
 import com.gestion.cuentas.excepcion.CuentaException;
+import com.gestion.cuentas.mapeador.MovimientoMapeador;
 import com.gestion.cuentas.modelo.Cuenta;
 import com.gestion.cuentas.repositorio.CuentaRepositorio;
+import com.gestion.cuentas.repositorio.MovimientoRepositorio;
 import com.gestion.cuentas.validacion.Validacion;
 import com.gestion.cuentas.validacion.ValidacionCuenta;
 import org.slf4j.Logger;
@@ -20,13 +23,16 @@ public class CuentaServicioImpl implements CuentaServicio {
 
     private final CuentaRepositorio cuentaRepositorio;
     private final EstadoFinancieroServicio estadoFinancieroServicio;
+    private final MovimientoRepositorio movimientoRepositorio;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CuentaServicioImpl.class);
 
     public CuentaServicioImpl(CuentaRepositorio cuentaRepositorio,
-                              EstadoFinancieroServicio estadoFinancieroServicio) {
+                              EstadoFinancieroServicio estadoFinancieroServicio,
+                              MovimientoRepositorio movimientoRepositorio) {
         this.cuentaRepositorio = cuentaRepositorio;
         this.estadoFinancieroServicio = estadoFinancieroServicio;
+        this.movimientoRepositorio = movimientoRepositorio;
     }
 
     @Override
@@ -38,6 +44,10 @@ public class CuentaServicioImpl implements CuentaServicio {
         Cuenta cuenta = CuentaMapeador.convertirAModelo(cuentaDto);
         cuentaRepositorio.insert(cuenta);
         LOGGER.info("Cuenta creada exitosamente idcuenta: "+cuenta.getId());
+        MovimientoDto movimientoDto = new MovimientoDto();
+        movimientoDto.setDescripcion(cuentaDto.getDescripcion());
+        movimientoDto.setIdcuenta(cuenta.getId());
+        movimientoRepositorio.save(MovimientoMapeador.convertirAModelo(movimientoDto));
         this.estadoFinancieroServicio.actualizarValoresTotales(cuenta.getIdpresupuesto());
         return CuentaMapeador.convertirADto(cuenta);
     }

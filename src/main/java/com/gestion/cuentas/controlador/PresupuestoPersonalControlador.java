@@ -4,6 +4,7 @@ import com.gestion.cuentas.dto.CuentaDto;
 import com.gestion.cuentas.dto.PresupuestoPersonalDto;
 import com.gestion.cuentas.servicio.CuentaServicio;
 import com.gestion.cuentas.servicio.EstadoFinancieroServicio;
+import com.gestion.cuentas.servicio.ManejadorServicios;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,13 +16,16 @@ public class PresupuestoPersonalControlador {
     public static final String USUARIOS_IDUSUARIO = "/usuarios/{idusuario}";
     public static final String IDPRESUPUESTO = "/{idpresupuesto}";
     public static final String IDPRESUPUESTO_CUENTAS = "/{idpresupuesto}/cuentas";
+    private static final String COPIAR_PRESUPUESTO = "/cp";;
     private EstadoFinancieroServicio estadoFinancieroServicio;
     private CuentaServicio cuentaServicio;
+    private ManejadorServicios manejadorServicios;
 
     public PresupuestoPersonalControlador(EstadoFinancieroServicio estadoFinancieroServicio,
-                                          CuentaServicio cuentaServicio){
+                                          CuentaServicio cuentaServicio, ManejadorServicios manejadorServicios){
         this.estadoFinancieroServicio = estadoFinancieroServicio;
         this.cuentaServicio = cuentaServicio;
+        this.manejadorServicios = manejadorServicios;
     }
 
     @PostMapping
@@ -44,4 +48,8 @@ public class PresupuestoPersonalControlador {
         return this.estadoFinancieroServicio.consultarCuentas(idpresupuesto);
     }
 
+    @PostMapping(COPIAR_PRESUPUESTO)
+    public PresupuestoPersonalDto copiarPresupuesto (@RequestBody PresupuestoPersonalDto presupuestoPersonalDto){
+        return this.manejadorServicios.copiarPresupuesto(presupuestoPersonalDto);
+    }
 }

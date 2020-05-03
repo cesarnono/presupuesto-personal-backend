@@ -10,6 +10,16 @@ public class PresupuestoPersonalDto {
     private double totalingresos;
     private double totalgastos;
     private double totalsaldo;
+    private String idpresupuestopadre;
+
+    public String getIdpresupuestopadre() {
+        return idpresupuestopadre;
+    }
+
+    public void setIdpresupuestopadre(String idpresupuestopadre) {
+        this.idpresupuestopadre = idpresupuestopadre;
+    }
+
     private List<CuentaDto> cuentaDtos;
 
     public String getId() {

@@ -12,4 +12,4 @@ public interface EstadoFinancieroServicio {
      PresupuestoPersonalDto consultar(String id);
      PresupuestoPersonalDto actualizarValoresTotales(String idpresupuesto);
      List<CuentaDto> consultarCuentas(String idpresupuesto);
-}
+     }

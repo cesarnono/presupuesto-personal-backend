@@ -32,6 +32,7 @@ public class PresupuestoPersonalServicio implements EstadoFinancieroServicio {
         this.cuentaRepositorio = cuentaRepositorio;
     }
     @Override
+    @Transactional
     public PresupuestoPersonalDto guardar(PresupuestoPersonalDto presupuestoPersonalDto) {
         PresupuestoPersonal presupuestoPersonal = PresupuestoPersonalMapeador.convertirAModelo(presupuestoPersonalDto);
         presupuestoPersonal.esValidoParaGuardar();
@@ -87,4 +88,6 @@ public class PresupuestoPersonalServicio implements EstadoFinancieroServicio {
         LOGGER.info("totales actualizados exitosamente en presupuesto: "+ presupuestoPersonal.getId());
         return PresupuestoPersonalMapeador.convertirADto(presupuestoPersonal);
     }
+
+
 }
