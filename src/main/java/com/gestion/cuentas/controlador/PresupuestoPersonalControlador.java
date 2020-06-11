@@ -24,21 +24,25 @@ public class PresupuestoPersonalControlador {
         this.cuentaServicio = cuentaServicio;
     }
 
+    @CrossOrigin
     @PostMapping
     public PresupuestoPersonalDto guardar(@RequestBody PresupuestoPersonalDto presupuestoPersonalDto) {
         return estadoFinancieroServicio.guardar(presupuestoPersonalDto);
     }
 
+    @CrossOrigin
     @GetMapping(USUARIOS_IDUSUARIO)
     public List<PresupuestoPersonalDto> consultarEstadosFinancierosPorUsuario(@PathVariable String idusuario){
        return estadoFinancieroServicio.consultarPresupuestosPorUsuario(idusuario);
     }
 
+    @CrossOrigin
     @GetMapping(IDPRESUPUESTO)
     public PresupuestoPersonalDto consultar(@PathVariable String idpresupuesto){
       return estadoFinancieroServicio.consultar(idpresupuesto);
     }
 
+    @CrossOrigin
     @GetMapping(IDPRESUPUESTO_CUENTAS)
     public List<CuentaDto> consultarCuentas(@PathVariable String idpresupuesto){
         return this.estadoFinancieroServicio.consultarCuentas(idpresupuesto);
