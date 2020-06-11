@@ -47,6 +47,10 @@ public class FiltroPeticionJwt extends OncePerRequestFilter {
                 }
             }
         }
-        filterChain.doFilter(request, response);
+        if ("OPTIONS".equals(request.getMethod())) {
+            response.setStatus(HttpServletResponse.SC_OK);
+        }else{
+            filterChain.doFilter(request, response);
+        }
     }
 }

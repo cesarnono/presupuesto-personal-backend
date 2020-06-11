@@ -13,6 +13,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsUtils;
 
 @EnableWebSecurity
 public class ConfiguracionSeguridad extends WebSecurityConfigurerAdapter {
@@ -29,7 +30,10 @@ public class ConfiguracionSeguridad extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable().authorizeRequests().antMatchers("/autenticacion").permitAll()
+        http.csrf().disable()
+                .authorizeRequests()
+                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
+                .antMatchers("/autenticacion").permitAll()
                 .anyRequest().authenticated()
                  .and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
